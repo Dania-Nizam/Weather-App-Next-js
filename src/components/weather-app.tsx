@@ -11,15 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CloudIcon, MapPinIcon, ThermometerIcon } from "lucide-react";
 
-interface weatherData {
+interface WeatherData{
   temperature: number;
-  description: string;
-  location: string;
-  unit: string;
+  description:string;
+  location:string;
+  unit:string;
 }
 export default function WeatherApp() {
   const [location, setLocation] = useState<string>("");
-  const [weather, setWeather] = useState<weatherData | null>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -27,7 +27,7 @@ export default function WeatherApp() {
     e.preventDefault();
 
     const trimmedLocation = location.trim();
-    if (trimmedLocation == "") {
+    if (trimmedLocation ==="") {
       setError("please enter a valid location.");
       setWeather(null);
       return;
@@ -43,32 +43,33 @@ export default function WeatherApp() {
         throw new Error("city not found.");
       }
       const data = await response.json();
-      const WeatherData: weatherData = {
+      const weatherData: WeatherData = {
         temperature: data.current.temp_c,
         description: data.current.condition.text,
         location: data.location.name,
         unit: "C",
       };
-      setWeather(WeatherData);
+      setWeather(weatherData);
     } catch (error) {
-      setError("city");
+      console.error("Error fetching weather data:", error);
+      setError("City not found .please try again.")
       setWeather(null);
     } finally {
       setIsLoading(false);
     }
   };
   function getTemperatureMessage(temperature: number, unit: string): string {
-    if (unit == "c") {
+    if (unit === "C") {
       if (temperature < 0) {
-        return `its freezing at ${temperature}°C! Bundle Up!`;
+        return `It's freezing at ${temperature}°C! Bundle Up!`;
       } else if (temperature < 10) {
-        return `its quit cold at ${temperature}°C! wear warm cloths.`;
+        return `It's quit cold at ${temperature}°C! wear warm cloths.`;
       } else if (temperature < 20) {
-        return `the temperature is ${temperature}°C! comfortable for a ligh jacket.`;
+        return `The temperature is ${temperature}°C! comfortable for a ligh jacket.`;
       } else if (temperature < 30) {
-        return `Its a pleasent ${temperature}°C! enjoy the nice weather! `;
+        return `It's a pleasant ${temperature}°C! enjoy the nice weather! `;
       } else {
-        return `its hot at ${temperature}°C. stay hydrated`;
+        return `It's hot at ${temperature}°C. stay hydrated`;
       }
     } else {
       //placeholder for other temperature units (e.g, Farenhiet)
@@ -76,10 +77,10 @@ export default function WeatherApp() {
     }
   }
 
-  function getweatherMessage(description: string) {
-    switch (description.toLocaleLowerCase()) {
+  function getWeatherMessage(description: string) {
+    switch (description.toLowerCase()) {
       case "sunny":
-        return "Its a beautiful sunny day!";
+        return "It's a beautiful sunny day!";
       case "partly cloudy":
         return "Expect some clouds and sunshine";
       case "overcast":
@@ -87,11 +88,11 @@ export default function WeatherApp() {
       case "rain":
         return "Dont forget your umbrella.";
       case "Thunderstrom":
-        return "thunderstrom is expected today";
+        return "Thunderstrom is expected today";
       case "snow":
         return "Bundle up! its snowing.";
       case "mist":
-        return "its misty outside.";
+        return "It's misty outside.";
       case "fog":
         return "Be careful, there is fog outside";
       default:
@@ -100,8 +101,8 @@ export default function WeatherApp() {
   }
   function getLocationMessage(location: string): string {
     const currentHour = new Date().getHours();
-    const isNigt = currentHour >= 18 || currentHour < 6;
-    return `${location} ${isNigt ? "at Night" : "During the Day"}`;
+    const isNight = currentHour >= 18 || currentHour < 6;
+    return `${location} ${isNight ? "at Night" : "During the Day"}`;
   }
   return (
     <div className="flex justify-center items-center h-screen">
@@ -109,18 +110,18 @@ export default function WeatherApp() {
         <CardHeader>
           <CardTitle> WEATHER APP</CardTitle>
           <CardDescription>
-            {" "}
+            
             Search for the current weather conditon in your city
           </CardDescription>
         </CardHeader>
         <CardContent>
         <form onSubmit={handleSearch} className="flex items-center gap-2">
-          {" "}
+          
           <Input
             type="text"
             placeholder="Enter a city Name"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>)=> setLocation(e.target.value)}
           />
           <Button type="submit" disabled={isLoading}>
             {isLoading ? "loading.... " : "search"}
@@ -137,7 +138,7 @@ export default function WeatherApp() {
 
             <div className=" flex items center gap 2">
               <CloudIcon className="w-6 h-6" />
-              {getweatherMessage(weather.description)}
+              {getWeatherMessage(weather.description)}
             </div>
 
             <div className=" flex items center gap 2">
